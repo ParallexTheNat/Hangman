@@ -4,6 +4,7 @@ const won = document.getElementById("won");
 const lost = document.getElementById("lost");
 
 const words = document.querySelector(".words");
+const wordss = document.querySelector(".wordss");
 const letters = document.querySelector(".letters");
 const wordlist = document.getElementById("wordlist");
 const livesleft = document.getElementById("livesleft");
@@ -12,13 +13,28 @@ const livesleft = document.getElementById("livesleft");
 
 const letterslist = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
-let initalword = ["N", "A", "T", "L", "A", "B", "A"];
+let initalword = ["N", "A", "T"];
 let undescore = [];
 let lives = 9;
-let win = false
+let win
+let wordsguessed = initalword.length
+let wordl = " "
+
+for (let i = 0; i < initalword.length; i++){
+    wordl += initalword[i] 
+    wordl = wordl.toLowerCase()
+}
+
+won.innerHTML = "you won! the word was" + wordl
+lost.innerHTML ="you lost. the word was" + wordl
 
 function creategame(){
-    writeword()
+    for (let i = 0; i < initalword.length; i++){
+        const word = document.createElement("h3")
+        word.setAttribute("id", i)
+        word.innerHTML += "_" + "."
+        wordss.appendChild(word)
+    }
     for(let i = 0; i < letterslist.length; i++){
         const button = document.createElement("button")
         button.setAttribute("id", i)
@@ -32,33 +48,43 @@ function creategame(){
 function clicked(){
     let letternum = this.getAttribute("id");
     this.setAttribute("style", "background-color: rgba(101, 177, 204, 0.281); color: rgba(0, 0, 0, 0.281);")
-    console.log(letterslist[letternum])
     checkword(letterslist[letternum])
 }
 
-function writeword(){
-    wordlist.innerHTML = "";
-    for (let i = 0; i < initalword.length; i++){
-        undescore += "_";
-        wordlist.innerHTML += " "+ undescore[i] + " ";
+function writeword(num, word){
+    const getid = document.getElementById(num)
+    getid.innerHTML = word + "."
+    wordsguessed--;
+    checkwin()
+}
+
+function checkwin(){
+    if (wordsguessed === 0){
+        win = true
+    }else{
+        if(lives === 0){
+            win = false
+        }
     }
+    if(win === true){
+        gamescreen.style.display = "none";
+        won.style.display = "flex";
+    }if (win === false) {
+        gamescreen.style.display = "none";
+        lost.style.display = "flex";
+    }
+    
 }
 
 function checkword(guess){
     if (initalword.indexOf(guess) > -1){
-        console.log("letter is in the word")
-        
+        let num = initalword.indexOf(guess)
+        writeword(num, guess)
     }else{
         if (lives > 0){
             lives--;
-        }else{
-            gamescreen.style.display = "none";
-            if(win === true){
-                won.style.display = "flex";
-            }else{
-                lost.style.display = "flex";
-            }
         }
+        checkwin()
         livesleft.textContent = lives
         console.log("letter isnt")
     }
